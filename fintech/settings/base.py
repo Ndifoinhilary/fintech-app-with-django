@@ -34,7 +34,7 @@ THIRD_PARTY_APPS = [
     'cloudinary',
     'phonenumber_field',
 ]
-LOCAL_APPS = []
+LOCAL_APPS = ["apps.core"]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 

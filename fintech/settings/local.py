@@ -1,5 +1,3 @@
-from os import getenv, path
-from dotenv import  load_dotenv
 from .base import  *
 
 APPS_DIR = BASE_DIR / 'apps'
@@ -17,7 +15,7 @@ DEBUG = getenv("DEBUG")
 SITE_NAME = getenv("SITE_NAME")
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
-ADMIN_URL = getenv("ADMIN_URL")
+ADMIN_URL = getenv("ADMIN_URL", "admin/")
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.CeleryEmailBackend'
 EMAIL_HOST = getenv("EMAIL_HOST")
