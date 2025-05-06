@@ -85,7 +85,7 @@ venv/
 ENV/
 .venv
 .envs/*
-!.enva/.env.example
+!.envs/.env.example
 # Spyder project settings
 .spyderproject
 
