@@ -34,6 +34,7 @@ inflection==0.5.1
 jsonschema==4.23.0
 jsonschema-specifications==2025.4.1
 kombu==5.5.3
+loguru==0.7.3
 oauthlib==3.2.2
 phonenumbers==9.0.4
 pillow==11.2.1

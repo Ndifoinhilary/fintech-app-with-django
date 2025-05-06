@@ -1,13 +1,18 @@
 from os import getenv, path
-from dotenv import  load_dotenv
+
+from dotenv import load_dotenv
 from pathlib import Path
+from loguru import logger
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
-APPS_DIR = BASE_DIR / 'apps'
-local_env_files = path.join(BASE_DIR, ".envs", ".env.local")
 
-if path.isfile(local_env_files):
-    load_dotenv(local_env_files)
+
+
+APPS_DIR = BASE_DIR / 'apps'
+local_env_file = BASE_DIR / "fintech" / ".envs" / ".env.local"
+if local_env_file.is_file():
+    load_dotenv(dotenv_path=local_env_file)
 
 
 # Application definition
@@ -53,7 +58,7 @@ ROOT_URLCONF = 'fintech.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [str(APPS_DIR /'templates')]
+        'DIRS': [str(APPS_DIR / 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -68,18 +73,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fintech.wsgi.application'
 
-
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': getenv('POSTGRES_DB'),
+        'USER': getenv('POSTGRES_USER'),
+        'PASSWORD': getenv('POSTGRES_PASSWORD'),
+        'HOST': getenv('POSTGRES_HOST'),
     }
 }
-
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
@@ -107,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -132,3 +136,46 @@ STATIC_ROOT = str(BASE_DIR / 'staticfiles')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING_CONFIG = None
+
+LOGURU_LOGGING = {
+    "handlers": [
+        {"sink": BASE_DIR / "logs/debug.log",
+         "level": "DEBUG",
+         "filter": lambda record: record["level"].no <= logger.level("WARNING").no,
+         "format": "<green>{time:YYYY-MM-DD at HH:mm:ss}</green> | "
+                   "<level>{level: <8}</level> | "
+                   "<cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
+                   "<level>{message}</level>",
+         "rotation": "10MB",
+         "retention": "30 days",
+         "compression": "zip",
+         },
+        {"sink": BASE_DIR / "logs/error.log",
+         "level": "ERROR",
+         "format": "<green>{time:YYYY-MM-DD at HH:mm:ss}</green> | "
+                   "<level>{level: <8}</level> | "
+                   "<cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
+                   "<level>{message}</level>",
+         "rotation": "10MB",
+         "retention": "30 days",
+         "compression": "zip",
+         "backtrace": True,
+         "diagnose": True,
+         },
+
+    ],
+}
+
+logger.configure(**LOGURU_LOGGING)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"loguru": {"class": "interceptor.InterceptHandler"}},
+    "root": {
+        "handlers": ["loguru"],
+        "level": "DEBUG",
+    },
+}
