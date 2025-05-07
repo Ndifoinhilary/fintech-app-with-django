@@ -1,0 +1,54 @@
+services:
+  fintech: &fintech
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    volumes:
+      - .:/app:z
+      - ./staticfiles:/app/staticfiles
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./fintech/.envs/.env.local
+    depends_on:
+      - postgres
+      - mailpit
+    command: /start.sh
+    networks:
+      - fintech_bank
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/local/postgres/Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./fintech/.envs/.env.local
+    networks:
+      - fintech_bank
+
+  mailpit:
+    image: docker.io/axllent/mailpit:v1.20.3
+    ports:
+      - "8025:8025"
+    volumes:
+      - mailpit_data:/data
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_DATA_FILE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - fintech_bank
+
+networks:
+  fintech_bank:
+    name: fintech_bank
+    external: true
+
+volumes:
+  postgres_data:
+  mailpit_data:
