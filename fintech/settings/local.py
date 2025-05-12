@@ -16,7 +16,7 @@ DEBUG = getenv("DEBUG")
 SITE_NAME = getenv("SITE_NAME")
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
-ADMIN_URL = getenv("ADMIN_URL", "admin/")
+ADMIN_URL = getenv("ADMIN_URL")
 
 EMAIL_BACKEND = 'django.core.mail.backends.CeleryEmailBackend'
 EMAIL_HOST = getenv("EMAIL_HOST")
