@@ -1,11 +1,11 @@
 
 from .base import  *
 
-APPS_DIR = BASE_DIR / 'apps'
-local_env_files = path.join(BASE_DIR, ".envs", ".env.local")
 
-if path.isfile(local_env_files):
-    load_dotenv(local_env_files)
+APPS_DIR = BASE_DIR / 'apps'
+local_env_file = BASE_DIR / "fintech" / ".envs" / ".env.local"
+if local_env_file.is_file():
+    load_dotenv(dotenv_path=local_env_file)
 
 
 SECRET_KEY = getenv("SECRET_KEY")

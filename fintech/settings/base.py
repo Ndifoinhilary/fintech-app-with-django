@@ -181,4 +181,22 @@ LOGGING = {
     },
 }
 
-AUTH_USER_MODEL = 'apps.account.User'
+AUTH_USER_MODEL = 'account.User'
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+
+# Settings for drf spectacular
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Fintech API",
+    "DESCRIPTION": "Fintech API documentation",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "LICENSE": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+}
