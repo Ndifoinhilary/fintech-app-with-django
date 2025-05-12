@@ -6,8 +6,10 @@ services:
     volumes:
       - .:/app:z
       - ./staticfiles:/app/staticfiles
-    ports:
-      - "8000:8000"
+#    ports:
+#      - "8000:8000"
+    expose:
+      - "8000"
     env_file:
       - ./fintech/.envs/.env.local
     depends_on:
@@ -44,6 +46,21 @@ services:
     networks:
       - fintech_bank
 
+  nginx:
+    build:
+      context: ./docker/local/nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - logs_store:/var/log/nginx
+    depends_on:
+      - fintech
+    networks:
+      - fintech_bank
+
 networks:
   fintech_bank:
     name: fintech_bank
@@ -52,3 +69,4 @@ networks:
 volumes:
   postgres_data:
   mailpit_data:
+  logs_store:
