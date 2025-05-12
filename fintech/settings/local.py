@@ -1,3 +1,4 @@
+
 from .base import  *
 
 APPS_DIR = BASE_DIR / 'apps'
@@ -26,5 +27,12 @@ DOMAIN_NAME = getenv("DOMAIN_NAME")
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024
 
 
+
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+
+LOGIN_ATTEMPTS_LIMIT = 3
+LOCKOUT_DURATION= timedelta(minutes=1)
+OTP_EXPIRATION_TIME = timedelta(minutes=1)
 
 

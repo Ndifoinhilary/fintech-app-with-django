@@ -1,0 +1,15 @@
+{% extends 'emails/base.html' %}
+
+{% block title %}
+Account Locked
+{% endblock title %}
+
+{% block content %}
+<p>Dear {{ user.full_name }},</p>
+<p>Your account has been locked due to multiple failed login attempts <strong>{{ login_attempts_limit }}</strong> times . Please contact support to unlock your account.</p>
+<p>If you believe this is a mistake, please click the link below to unlock your account:</p>
+    <p>It take {{ locked_duration }} minutes. To unlock it </p>
+<p>If you did not attempt to log in, please ignore this email.</p>
+<p>Thank you,</p>
+<p> <strong>The {{ site_name }} Team</strong> </p>
+{% endblock content %}

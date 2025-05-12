@@ -3,6 +3,7 @@ from os import getenv, path
 from dotenv import load_dotenv
 from pathlib import Path
 from loguru import logger
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
@@ -39,7 +40,7 @@ THIRD_PARTY_APPS = [
     'cloudinary',
     'phonenumber_field',
 ]
-LOCAL_APPS = ["apps.core"]
+LOCAL_APPS = ["apps.core", "apps.account"]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
@@ -179,3 +180,5 @@ LOGGING = {
         "level": "DEBUG",
     },
 }
+
+AUTH_USER_MODEL = 'apps.account.User'
