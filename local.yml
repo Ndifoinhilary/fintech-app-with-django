@@ -5,7 +5,7 @@ services:
       dockerfile: ./docker/local/django/Dockerfile
     volumes:
       - .:/app:z
-      - ./staticfiles:/app/staticfiles
+      - staticfiles_volume:/app/staticfiles
 #    ports:
 #      - "8000:8000"
     expose:
@@ -15,6 +15,8 @@ services:
     depends_on:
       - postgres
       - mailpit
+      - redis
+      - rabbitmq
     command: /start.sh
     networks:
       - fintech_bank
@@ -24,7 +26,7 @@ services:
       context: .
       dockerfile: ./docker/local/postgres/Dockerfile
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
@@ -52,14 +54,56 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "8080:80"
+      - "9090:80"
     volumes:
-      - ./staticfiles:/app/staticfiles
+      - staticfiles_volume:/app/staticfiles
       - logs_store:/var/log/nginx
     depends_on:
       - fintech
     networks:
       - fintech_bank
+  redis:
+    image: redis:7.0-alpine3.19
+    command: redis-server --appendonly yes
+    networks:
+      - fintech_bank
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5682:5682"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - fintech_bank
+  celeryworker:
+    <<: *fintech
+    command: /start-celeryworker.sh
+
+  flower:
+    <<: *fintech
+    ports:
+      - "5555:5555"
+    volumes:
+      - flower_db:/app/flower_db
+    command: /start-flower.sh
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    command: /start-celerybeat.sh
+    env_file:
+      - ./fintech/.envs/.env.local
+    depends_on:
+      - redis
+      - postgres
+      - rabbitmq
+    networks:
+      - fintech_bank
+
 
 networks:
   fintech_bank:
@@ -70,3 +114,7 @@ volumes:
   postgres_data:
   mailpit_data:
   logs_store:
+  rabbitmq_data:
+  rabbitmq_log:
+  flower_db:
+  staticfiles_volume:

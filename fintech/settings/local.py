@@ -15,7 +15,7 @@ DEBUG = getenv("DEBUG")
 
 SITE_NAME = getenv("SITE_NAME")
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 ADMIN_URL = getenv("ADMIN_URL")
 
 EMAIL_BACKEND = 'django.core.mail.backends.CeleryEmailBackend'
@@ -29,7 +29,7 @@ MAX_UPLOAD_SIZE = 1 * 1024 * 1024
 
 
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 
 LOGIN_ATTEMPTS_LIMIT = 3
 LOCKOUT_DURATION= timedelta(minutes=1)

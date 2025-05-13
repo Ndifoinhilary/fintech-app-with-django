@@ -1,1 +1,3 @@
 -r base.txt
+
+watchfiles>=0.18

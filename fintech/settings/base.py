@@ -38,6 +38,7 @@ THIRD_PARTY_APPS = [
     'drf_spectacular',
     'djcelery_email',
     'cloudinary',
+    'flower',
     'phonenumber_field',
 ]
 LOCAL_APPS = ["apps.core", "apps.account"]
@@ -125,7 +126,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-SIDE_ID = 1
+SITE_ID = 1
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -201,3 +202,20 @@ SPECTACULAR_SETTINGS = {
         "url": "https://opensource.org/licenses/MIT",
     },
 }
+
+
+# Celery settings
+if USE_TZ:
+    CELERY_TIMEZONE = TIME_ZONE
+CELERY_BROKER_URL = getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_BACKEND = getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND_MAX_RETRIES = 10
+CELERY_TASK_SENT_EVENT = True
+CELERY_RESULT_EXTENDED = True
+CELERY_RESULT_BACKEND_ALWAYS_RETRY = True
+CELERY_TASK_TIME_LIMIT = 5 * 60
+CELERY_TASK_SOFT_TIME_LIMIT =  60
+CELERY_BEAT_SCHEDULE = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_WORKER_SEND_TASK_EVENTS = True
