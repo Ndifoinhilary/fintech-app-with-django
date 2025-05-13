@@ -1,20 +1,16 @@
-from os import getenv, path
-
-from dotenv import load_dotenv
+from os import getenv
 from pathlib import Path
+
+import cloudinary
+from dotenv import load_dotenv
 from loguru import logger
-from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-
-
-
 
 APPS_DIR = BASE_DIR / 'apps'
 local_env_file = BASE_DIR / "fintech" / ".envs" / ".env.local"
 if local_env_file.is_file():
     load_dotenv(dotenv_path=local_env_file)
-
 
 # Application definition
 
@@ -171,6 +167,16 @@ LOGURU_LOGGING = {
     ],
 }
 
+CLOUDINARY_CLOUD_NAME = getenv('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = getenv('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = getenv('CLOUDINARY_API_SECRET')
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
+)
+
 logger.configure(**LOGURU_LOGGING)
 
 LOGGING = {
@@ -185,11 +191,9 @@ LOGGING = {
 
 AUTH_USER_MODEL = 'account.User'
 
-
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
-
 
 # Settings for drf spectacular
 SPECTACULAR_SETTINGS = {
@@ -203,7 +207,6 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-
 # Celery settings
 if USE_TZ:
     CELERY_TIMEZONE = TIME_ZONE
@@ -216,6 +219,6 @@ CELERY_TASK_SENT_EVENT = True
 CELERY_RESULT_EXTENDED = True
 CELERY_RESULT_BACKEND_ALWAYS_RETRY = True
 CELERY_TASK_TIME_LIMIT = 5 * 60
-CELERY_TASK_SOFT_TIME_LIMIT =  60
+CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULE = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
