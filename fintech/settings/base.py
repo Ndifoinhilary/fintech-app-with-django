@@ -1,3 +1,4 @@
+from datetime import date
 from os import getenv
 from pathlib import Path
 
@@ -190,7 +191,11 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = 'account.User'
-
+DEFAULT_BIRTH_DATE = date(1900, 1, 1)
+DEFAULT_DATE= date(2000, 1, 1)
+DEFAULT_EXPIRY_DATE= date(20224, 1, 1)
+DEFAULT_COUNTRY = "CM"
+DEFAULT_PHONE_NUMBER = "+237650282777"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
