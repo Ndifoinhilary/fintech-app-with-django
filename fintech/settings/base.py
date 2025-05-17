@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from os import getenv
 from pathlib import Path
 
@@ -192,12 +192,66 @@ LOGGING = {
 
 AUTH_USER_MODEL = 'account.User'
 DEFAULT_BIRTH_DATE = date(1900, 1, 1)
-DEFAULT_DATE= date(2000, 1, 1)
-DEFAULT_EXPIRY_DATE= date(20224, 1, 1)
+DEFAULT_DATE = date(2000, 1, 1)
+DEFAULT_EXPIRY_DATE = date(20224, 1, 1)
 DEFAULT_COUNTRY = "CM"
 DEFAULT_PHONE_NUMBER = "+237650282777"
+
+# Django Rest Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "apps.account.cookie_auth.CookieAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "50/day",
+        "user": "100/day",
+    },
+}
+
+# Jwt settings
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": getenv("SIGNING_KEY"),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}
+
+# Djoser settings
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    "USER_ID_FIELD": "id",
+    "TOKEN_MODEL": None,
+    "USER_CREATE_PASSWORD_RETYPE": True,
+    "SEND_ACTIVATION_EMAIL": True,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
+    "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+
+    "SERIALIZERS": {
+        "user_create": "apps.account.serializers.UserCreateSerializer"
+    }
 }
 
 # Settings for drf spectacular
@@ -228,10 +282,9 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULE = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 
-
 # Setting up cookies
-COOKIE_NAME="access"
+COOKIE_NAME = "access"
 COOKIE_SAMESITE = "Lax"
-COOKIE_PATH="/"
+COOKIE_PATH = "/"
 COOKIE_SECURE = getenv("COOKIE_SECURE", "True") == "True"
 COOKIE_HTTPONLY = True
