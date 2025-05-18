@@ -1,6 +1,7 @@
 import uuid
 
 from cloudinary.models import CloudinaryField
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -120,7 +121,7 @@ class User(AbstractUser):
             self.save(update_fields=["failed_login_attempts", "last_login_attempt"])
             return False
 
-    def reset_last_login_attempt(self):
+    def reset_failed_login_attempt(self):
         """
         Reset the last login attempt and failed login attempts.
         :return: None
@@ -130,22 +131,37 @@ class User(AbstractUser):
         self.account_status = self.AccountStatus.ACTIVE
         self.save(update_fields=["failed_login_attempts", "last_login_attempt", "account_status"])
 
-
-
     @property
-    def unlock_account(self):
+    def is_locked_out(self):
         """
-        Unlock the account after the lockout duration.
-        :return: None
+        Checks if the account is currently locked out.
+        If the lockout duration has expired, unlocks the account.
+        :return: Boolean indicating if the account is still locked out
         """
         if self.account_status == self.AccountStatus.LOCKED:
+            # Check if lockout duration has expired
             if timezone.now() > self.last_login_attempt + settings.LOCKOUT_DURATION:
+                # Unlock the account
                 self.account_status = self.AccountStatus.ACTIVE
                 self.failed_login_attempts = 0
                 self.last_login_attempt = None
                 self.save(update_fields=["account_status", "failed_login_attempts", "last_login_attempt"])
+                return False
+            else:
                 return True
         return False
+
+    def set_security_answer(self, raw_answer):
+        """
+        Sets a hashed security answer
+        """
+        self.security_answer = make_password(raw_answer)
+
+    def check_security_answer(self, raw_answer):
+        """
+        Checks if the provided answer matches the stored security answer
+        """
+        return check_password(raw_answer, self.security_answer)
 
     @property
     def full_name(self):
