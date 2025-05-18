@@ -59,7 +59,7 @@ class NextOfKinInline(admin.TabularInline):
             'fields': ('email_address', 'phone_number', 'address', 'city', 'state', 'country')
         }),
     )
-    readonly_fields = ('created', 'modified')
+    readonly_fields = ('created_at', 'updated_at',)
 
 
 class ProfileCompletionFilter(SimpleListFilter):
@@ -107,7 +107,7 @@ class ProfileAdmin(admin.ModelAdmin):
                    'nationality', 'employment_status', ProfileCompletionFilter)
     search_fields = ('user__email', 'user__first_name', 'user__last_name',
                      'phone_number', 'passport_number', 'city')
-    readonly_fields = ('created', 'modified', 'display_photos')
+    readonly_fields = ('created_at', 'updated_at', 'display_photos')
     inlines = [NextOfKinInline]
 
     fieldsets = (
@@ -189,7 +189,7 @@ class NextOfKinAdmin(admin.ModelAdmin):
     list_filter = ('relationship', 'gender', 'is_primary')
     search_fields = ('first_name', 'last_name', 'other_name', 'phone_number',
                      'profile__user__email', 'profile__user__first_name', 'profile__user__last_name')
-    readonly_fields = ('created', 'modified')
+    readonly_fields = ('created_at', 'updated_at',)
 
     fieldsets = (
         (_('Profile'), {

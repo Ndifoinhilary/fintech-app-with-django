@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, IntegrityError
@@ -9,7 +9,6 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
-User = get_user_model()
 
 
 class TimeStampedModel(models.Model):
@@ -31,7 +30,7 @@ class ContentView(TimeStampedModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name=_('Content Type'))
     object_id = models.UUIDField(verbose_name=_('Object ID'))
     content_object = GenericForeignKey('content_type', 'object_id')
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('User'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('User'))
     ip_address = models.GenericIPAddressField(verbose_name=_('IP Address'), blank=True, null=True)
     last_viewed = models.DateTimeField()
 

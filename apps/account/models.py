@@ -8,8 +8,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-from django_filters.conf import settings
 from phonenumber_field.modelfields import PhoneNumberField
+from django.conf import settings
 
 from .managers import UserManager
 from ..core.models import TimeStampedModel
@@ -243,7 +243,7 @@ class Profile(TimeStampedModel):
 
     date_of_birth = models.DateField(_("Date of birth"), blank=True, null=True, default=settings.DEFAULT_BIRTH_DATE)
 
-    identification_type = models.CharField(_("Identification type"), choices=IdentificationTypeChoice.choices, default=IdentificationTypeChoice.ID_CARD, max_length=10)
+    identification_type = models.CharField(_("Identification type"), choices=IdentificationTypeChoice.choices, default=IdentificationTypeChoice.ID_CARD, max_length=20)
 
     country_of_birth = CountryField(_("Country"), blank=True, null=True, default=settings.DEFAULT_COUNTRY)
 
@@ -253,7 +253,7 @@ class Profile(TimeStampedModel):
 
     id_expiry_date = models.DateField(_("ID expiry date"), blank=True, null=True, default=settings.DEFAULT_EXPIRY_DATE)
 
-    employment_status = models.CharField(_("Employment status"), choices=EmploymentChoice.choices, default=EmploymentChoice.UNEMPLOYED, max_length=10)
+    employment_status = models.CharField(_("Employment status"), choices=EmploymentChoice.choices, default=EmploymentChoice.UNEMPLOYED, max_length=20)
 
     passport_number = models.CharField(_("Passport number"), max_length=20, blank=True, null=True)
 
